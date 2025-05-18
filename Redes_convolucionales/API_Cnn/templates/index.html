@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dibuja y Predice Tu Número</title>
+  <style>
+    /* Fuente y reset básico */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px 40px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      animation: appear 0.8s ease-out;
+    }
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 {
+      margin-bottom: 15px;
+      font-size: 2.2em;
+      color: #007BFF;
+    }
+    p.description {
+      font-size: 1.1em;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+    canvas {
+      border: 3px solid #007BFF;
+      background-color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    canvas:hover {
+      transform: scale(1.02);
+    }
+    button {
+      padding: 12px 25px;
+      margin: 8px;
+      font-size: 1em;
+      border: none;
+      border-radius: 30px;
+      background: #007BFF;
+      color: white;
+      cursor: pointer;  
+    }
+    button:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+    #result {
+      font-size: 1.5em;
+      margin-top: 20px;
+      color: #007BFF;
+    }
+    #outputImage {
+      display: block;
+      margin: 20px auto;
+      border: 3px solid #007BFF;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Reconoce Tu Dibujo</h1>
+    <p class="description">
+      ¡Bienvenido! Usa el área de dibujo para crear un dígito del 0 al 9. Nuestro modelo CNN, entrenado con el dataset MNIST, convertirá
+      tu dibujo en una imagen 28x28 y te dirá qué número has dibujado. ¡Diviértete y experimenta!
+    </p>
+    <canvas id="canvas" width="280" height="280"></canvas>
+    <br>
+    <button id="clear">Limpiar</button>
+    <button id="predict">Predecir</button>
+    
+    <h2 id="result"></h2>
+    <div id="output">
+      <img id="outputImage" src="" alt="Imagen procesada" width="140" height="140" style="display:none;">
+    </div>
+  </div>
+
+  <script>
+    // Configuración del canvas
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    // Inicializar canvas con fondo blanco
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    canvas.addEventListener('mousedown', (e) => {
+      drawing = true;
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (drawing) {
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 15;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.stroke();
+      }
+    });
+
+    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mouseleave', () => drawing = false);
+
+    // Botón para limpiar el canvas
+    document.getElementById('clear').addEventListener('click', () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      document.getElementById('result').innerText = "";
+      document.getElementById('outputImage').style.display = "none";
+    });
+
+    // Botón para predecir el número dibujado
+    document.getElementById('predict').addEventListener('click', () => {
+      const dataURL = canvas.toDataURL('image/png');
+      fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: dataURL })
+      })
+      .then(response => response.json())
+      .then(data => {
+          document.getElementById('result').innerText = "Número predicho: " + data.predicted + " (Confianza: " + data.confidence + "%)";
+          const outputImg = document.getElementById('outputImage');
+          outputImg.src = data.processed_image;
+          outputImg.style.display = "block";
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  </script>
+</body>
+</html>
