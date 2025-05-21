@@ -1,71 +1,23 @@
-# Clasificación de Dígitos Manuscritos con Redes Convolucionales (CNN)
+# Proyecto: Reconocimiento de Dígitos con Red Neuronal Convolucional
 
-## Objetivo
+Este repositorio contiene dos componentes principales:
 
-El objetivo de este repositorio es entrenar un modelo de red neuronal convolucional (CNN) capaz de reconocer y clasificar correctamente dígitos manuscritos a partir de imágenes, utilizando el popular dataset MNIST. El modelo también permite predecir números en imágenes externas, tanto individuales como secuencias de varios dígitos.
+## 1. Notebook de Entrenamiento de la Red Neuronal Convolucional
+- **Ubicación:** `Redes_convolucionales/cnn.ipynb`
+- En este notebook se desarrolla todo el proceso de entrenamiento de una red neuronal convolucional (CNN) para el reconocimiento de dígitos escritos a mano.
+- Incluye la carga de datos, preprocesamiento, definición y entrenamiento del modelo, así como la evaluación de su desempeño.
+- Al finalizar, se guarda el modelo entrenado en el archivo `modelo.keras` para su uso posterior.
 
-## Descripción del Proyecto
+## 2. Aplicación Web para Predicción de Dígitos
+- **Ubicación:** `Redes_convolucionales/API_Cnn/`
+- Esta carpeta contiene una aplicación web desarrollada con Flask.
+- Permite al usuario dibujar un número en un canvas desde el navegador web.
+- La imagen dibujada se envía al backend, donde el modelo previamente entrenado (guardado como `modelo.keras`) realiza la predicción del dígito.
+- La aplicación muestra el número predicho junto con el porcentaje de exactitud (confianza) del modelo.
+- El archivo principal de la aplicación es `app.py` y la interfaz web se encuentra en `templates/index.html`.
 
-El flujo de trabajo está documentado en el notebook `cnn.ipynb` y se compone de las siguientes etapas:
+---
 
-### 1. Importación de Librerías
-Se utilizan librerías como TensorFlow, Keras, NumPy, Matplotlib, PIL y scikit-learn para el procesamiento de datos, construcción y entrenamiento del modelo.
-
-### 2. Carga y Visualización de Datos
-- Se descarga el dataset MNIST, que contiene imágenes de dígitos manuscritos (28x28 píxeles, escala de grises).
-- Se visualizan ejemplos de imágenes y sus etiquetas para comprobar la correcta carga de los datos.
-
-### 3. Preprocesamiento de Datos
-- **Normalización:** Los valores de los píxeles se escalan al rango [0, 1].
-- **Reformateo:** Se añade una dimensión de canal para adaptar las imágenes a la entrada de la CNN.
-- **División:** El conjunto de datos se divide en entrenamiento, validación y test.
-
-### 4. Aumentación de Datos
-Se utiliza un generador de imágenes para aplicar transformaciones aleatorias (rotación, traslación, zoom, etc.) y así mejorar la robustez del modelo.
-
-### 5. Construcción y Entrenamiento del Modelo
-- Se define una arquitectura CNN con varias capas convolucionales, de pooling, flatten, densas y dropout.
-- El modelo se compila con el optimizador Adam y la función de pérdida de entropía cruzada categórica.
-- Se entrena el modelo utilizando el generador de aumentación de datos.
-
-### 6. Predicción sobre Imágenes Externas
-- Se implementan funciones para cargar, preprocesar y predecir el dígito en imágenes externas.
-- Se incluye una función para predecir secuencias de varios dígitos en una sola imagen, segmentando y clasificando cada uno.
-
-### 7. Guardado del Modelo
-El modelo entrenado se guarda en formato Keras (`modelo.keras`) para su reutilización o despliegue en aplicaciones.
-
-## ¿Cómo Funciona?
-
-1. **Entrenamiento:** El modelo aprende a identificar patrones en imágenes de dígitos manuscritos mediante capas convolucionales y de pooling.
-2. **Aumentación:** Se generan variaciones de las imágenes para mejorar la generalización.
-3. **Predicción:** El modelo puede recibir una imagen nueva (o una secuencia de dígitos) y predecir el número representado.
-
-## Estructura del Repositorio
-
-- `cnn.ipynb`: Notebook principal con todo el flujo de trabajo y visualizaciones.
-- `modelo.keras`: Modelo entrenado listo para usar.
-- `Imagenes/`: Carpeta con imágenes de prueba (individuales y múltiples dígitos).
-- `requirements.txt`: Dependencias necesarias para ejecutar el proyecto.
-
-## Requisitos
-
-- Python 3.8+
-- TensorFlow
-- Keras
-- numpy, matplotlib, pillow, scikit-learn
-
-Instalar dependencias:
-```bash
-pip install -r requirements.txt
-```
-
-## Ejecución
-
-1. Ejecuta el notebook `cnn.ipynb` paso a paso.
-2. Prueba la predicción sobre imágenes propias ubicadas en la carpeta `Imagenes/`.
-3. El modelo entrenado se guarda automáticamente y puede ser reutilizado.
-
-## Notas
-- El modelo puede ser ajustado modificando la arquitectura, los hiperparámetros o el esquema de aumentación de datos.
-- Las funciones incluidas permiten predecir tanto dígitos individuales como secuencias de varios números en una sola imagen.
+**Resumen:**
+- Entrena tu propio modelo CNN en el notebook y pruébalo fácilmente desde la web integrada.
+- Ideal para experimentar con reconocimiento de dígitos y despliegue de modelos de deep learning en aplicaciones web.
